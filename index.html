@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher's Countdown Calendar</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .container {
+        text-align: center;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+      }
+      #countdown {
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Countdown to Retirement</h1>
+      <img src="/api/placeholder/200/200" alt="Teacher's Picture" />
+      <p>Days left until retirement:</p>
+      <div id="countdown"></div>
+      <button onclick="addException()">Add Exception Date</button>
+      <div id="exceptions"></div>
+    </div>
+
+    <script>
+      let endDate = new Date("2025-06-15"); // Example end date
+      let exceptions = [];
+
+      function updateCountdown() {
+        const now = new Date();
+        let daysLeft = 0;
+        let currentDate = new Date(now);
+
+        while (currentDate <= endDate) {
+          // Check if it's a weekday (Monday = 1, Friday = 5)
+          if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+            // Check if it's not in the exceptions list
+            if (
+              !exceptions.some(
+                (date) => date.getTime() === currentDate.getTime()
+              )
+            ) {
+              daysLeft++;
+            }
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        document.getElementById("countdown").textContent = daysLeft;
+      }
+
+      function addException() {
+        const date = prompt("Enter exception date (YYYY-MM-DD):");
+        if (date) {
+          exceptions.push(new Date(date));
+          updateExceptions();
+          updateCountdown();
+        }
+      }
+
+      function updateExceptions() {
+        const exceptionsDiv = document.getElementById("exceptions");
+        exceptionsDiv.innerHTML = "<h3>Exception Dates:</h3>";
+        exceptions.forEach((date) => {
+          exceptionsDiv.innerHTML += `<p>${date.toDateString()} <button onclick="removeException('${date}')">Remove</button></p>`;
+        });
+      }
+
+      function removeException(dateString) {
+        exceptions = exceptions.filter(
+          (date) => date.toDateString() !== dateString
+        );
+        updateExceptions();
+        updateCountdown();
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 86400000); // Update once per day
+    </script>
+  </body>
+</html>
